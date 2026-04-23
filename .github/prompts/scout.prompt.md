@@ -17,4 +17,4 @@ For each target, provide:
 - whether unit tests or integration tests are the better fit
 Do not write code yet.
 Keep the output concise and structured.
-Write your output to agent-output/scout.md, overwriting any previous content.
+Write your output to agent-output/scout.md, overwriting any previous content, before presenting it in chat.
