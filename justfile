@@ -15,6 +15,10 @@ test:
 test-doc:
     cargo test --doc
 
+coverage:
+    mkdir -p agent-output
+    cargo llvm-cov --summary-only 2>&1 | tee agent-output/coverage.txt
+
 mutate:
     mkdir -p agent-output
     cargo mutants 2>&1 | tee agent-output/mutants.md
@@ -36,3 +40,35 @@ agent-analyze:
 agent-full:
     just check || true
     just mutate
+
+install target:
+    #!/usr/bin/env bash
+    set -euo pipefail
+    if [ ! -d "{{target}}" ]; then
+        echo "Error: {{target}} is not a directory"
+        exit 1
+    fi
+    if [ -f "{{target}}/.github/copilot-instructions.md" ]; then
+        echo "Warning: copilot-instructions.md already exists in {{target}}/.github/"
+        read -r -p "Overwrite? [y/N] " confirm
+        [[ "$confirm" =~ ^[Yy]$ ]] || exit 0
+    fi
+    if [ -f "{{target}}/justfile" ]; then
+        echo "Warning: justfile already exists in {{target}}"
+        read -r -p "Overwrite? [y/N] " confirm
+        [[ "$confirm" =~ ^[Yy]$ ]] || exit 0
+    fi
+    mkdir -p {{target}}/.github/prompts
+    mkdir -p {{target}}/agent-output
+    cp .github/copilot-instructions.md {{target}}/.github/copilot-instructions.md
+    cp .github/prompts/*.prompt.md {{target}}/.github/prompts/
+    cp justfile {{target}}/justfile
+    if ! grep -q '^agent-output/$' {{target}}/.gitignore 2>/dev/null; then
+        echo "" >> {{target}}/.gitignore
+        echo "# Local agent-team output" >> {{target}}/.gitignore
+        echo "agent-output/" >> {{target}}/.gitignore
+    fi
+    if ! grep -q '^mutants\.out\*$' {{target}}/.gitignore 2>/dev/null; then
+        echo "mutants.out*" >> {{target}}/.gitignore
+    fi
+    echo "Agent team installed into {{target}}"

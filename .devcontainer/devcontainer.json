@@ -21,7 +21,7 @@
       }
     }
   },
-  "postCreateCommand": "rustup component add clippy rustfmt && cargo install just cargo-mutants cargo-llvm-cov && bash scripts/bootstrap-agent-team.sh || true",
+  "postCreateCommand": "rustup component add clippy rustfmt && cargo install just cargo-mutants cargo-llvm-cov && bash scripts/bootstrap-agent-team.sh",
   "remoteEnv": {
     "CARGO_TERM_COLOR": "always"
   }
