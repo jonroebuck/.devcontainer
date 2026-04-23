@@ -1,0 +1,28 @@
+{
+  "name": "Rust Agent Team",
+  "image": "mcr.microsoft.com/devcontainers/rust:1-1-bullseye",
+  "features": {
+    "ghcr.io/devcontainers/features/github-cli:1": {}
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "GitHub.copilot",
+        "GitHub.copilot-chat",
+        "rust-lang.rust-analyzer",
+        "vadimcn.vscode-lldb",
+        "tamasfe.even-better-toml"
+      ],
+      "settings": {
+        "rust-analyzer.check.command": "clippy",
+        "editor.formatOnSave": true,
+        "files.trimTrailingWhitespace": true,
+        "files.insertFinalNewline": true
+      }
+    }
+  },
+  "postCreateCommand": "rustup component add clippy rustfmt && cargo install just cargo-mutants cargo-llvm-cov && bash scripts/bootstrap-agent-team.sh || true",
+  "remoteEnv": {
+    "CARGO_TERM_COLOR": "always"
+  }
+}
