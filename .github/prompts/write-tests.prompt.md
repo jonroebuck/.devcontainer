@@ -15,3 +15,9 @@ Process:
 After editing, suggest running:
 - `just test`
 - `just test-doc` if doc examples are relevant
+
+Append a dated summary of what you added to agent-output/writer.md, preserving previous entries. Include:
+- which file and function was targeted
+- what tests were added and why
+- which cases are covered
+- anything left uncovered and why
