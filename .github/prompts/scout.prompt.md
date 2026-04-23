@@ -7,7 +7,7 @@ Tasks:
 3. Run or inspect:
    - `just lint`
    - `just test` (to see what is already passing)
-   - coverage output from `just coverage` if available
+   - `just coverage` to generate coverage data, writing output to agent-output/coverage.md
 4. Rank the top 3 testing targets by likely value, flagging any functions with zero test coverage separately from those that are merely undertested.
 For each target, provide:
 - file

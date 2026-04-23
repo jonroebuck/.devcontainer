@@ -15,13 +15,13 @@ test:
 test-doc:
     cargo test --doc
 
-coverage:
-    mkdir -p agent-output
-    cargo llvm-cov --summary-only 2>&1 | tee agent-output/coverage.txt
-
 mutate:
     mkdir -p agent-output
     cargo mutants 2>&1 | tee agent-output/mutants.md
+
+coverage:
+    mkdir -p agent-output
+    cargo llvm-cov 2>&1 | tee agent-output/coverage.md
 
 check:
     just lint
@@ -63,6 +63,8 @@ install target:
     cp .github/copilot-instructions.md {{target}}/.github/copilot-instructions.md
     cp .github/prompts/*.prompt.md {{target}}/.github/prompts/
     cp justfile {{target}}/justfile
+    mkdir -p {{target}}/.devcontainer
+    cp .devcontainer/devcontainer.json {{target}}/.devcontainer/devcontainer.json
     if ! grep -q '^agent-output/$' {{target}}/.gitignore 2>/dev/null; then
         echo "" >> {{target}}/.gitignore
         echo "# Local agent-team output" >> {{target}}/.gitignore
