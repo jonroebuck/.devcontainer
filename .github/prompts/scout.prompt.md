@@ -15,6 +15,12 @@ For each target, provide:
 - why it looks risky or undertested
 - what kinds of tests are likely missing
 - whether unit tests or integration tests are the better fit
+5. Scan Cargo.toml for feature flags. For any features found, note:
+   - the feature name
+   - which modules are gated behind it
+   - whether a separate `cargo mutants --features <name>` run would be needed
+   - the just task name to add (e.g. mutate-wally for the wally feature)
+Include this in the scout output under a ## Feature Flags section.
 Do not write code yet.
 Keep the output concise and structured.
 Write your output to agent-output/scout.md, overwriting any previous content, before presenting it in chat.
