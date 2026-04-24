@@ -1,0 +1,57 @@
+name: Rust Agent Team
+
+on:
+  workflow_dispatch:
+
+jobs:
+  agent-run:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Rust tools
+        run: |
+          rustup component add clippy rustfmt
+          cargo install just cargo-mutants cargo-llvm-cov --locked || true
+
+      - name: Create agent-output directory
+        run: mkdir -p agent-output
+
+      - name: Run coverage
+        run: cargo llvm-cov 2>&1 | tee agent-output/coverage.md || true
+
+      - name: Run lint
+        run: cargo clippy -- -D warnings 2>&1 | tee agent-output/lint.md || true
+
+      - name: Run tests
+        run: cargo test 2>&1 | tee agent-output/test-results.md
+
+      - name: Run mutation testing
+        run: cargo mutants 2>&1 | tee agent-output/mutants.md || true
+
+      - name: Generate summary report
+        run: |
+          echo "# Agent Team Report" > agent-output/report.md
+          echo "Generated: $(date -u)" >> agent-output/report.md
+          echo "" >> agent-output/report.md
+          echo "## Test Results" >> agent-output/report.md
+          grep "test result" agent-output/test-results.md >> agent-output/report.md || true
+          echo "" >> agent-output/report.md
+          echo "## Mutation Testing" >> agent-output/report.md
+          tail -5 agent-output/mutants.md >> agent-output/report.md || true
+          echo "" >> agent-output/report.md
+          echo "## Coverage" >> agent-output/report.md
+          tail -10 agent-output/coverage.md >> agent-output/report.md || true
+          echo "" >> agent-output/report.md
+          echo "## Lint" >> agent-output/report.md
+          tail -10 agent-output/lint.md >> agent-output/report.md || true
+
+      - name: Commit results
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add agent-output/
+          git diff --staged --quiet || git commit -m "agent team run: $(date -u +'%Y-%m-%d %H:%M UTC')"
+          git push

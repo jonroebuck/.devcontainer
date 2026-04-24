@@ -98,6 +98,8 @@ install target:
     cp .github/prompts/*.prompt.md {{target}}/.github/prompts/
     cp .github/workflows/solid-refactor.yml {{target}}/.github/workflows/solid-refactor.yml
     cp justfile {{target}}/justfile
+    mkdir -p {{target}}/.github/workflows
+    cp .github/workflows/agent-team.yml {{target}}/.github/workflows/agent-team.yml
     mkdir -p {{target}}/.devcontainer
     cp .devcontainer/devcontainer.json {{target}}/.devcontainer/devcontainer.json
     if ! grep -q '^agent-output/$' {{target}}/.gitignore 2>/dev/null; then
