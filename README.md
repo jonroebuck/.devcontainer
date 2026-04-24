@@ -208,6 +208,13 @@ than after every pass.
 | `just agent-full` | Run full check then mutate |
 | `just install <path>` | Install agent team into target repo |
 | `just bootstrap` | Run bootstrap script |
+| `just audit` | Run Auditor, write audit.md |
+| `just gate` | Run coverage then prompt Gatekeeper |
+| `just classify` | Run Classifier against audit.md |
+| `just refactor` | Run Refactorer against top classification target |
+| `just verify` | Run tests then prompt Verifier |
+| `just solid-full` | Run full SOLID pipeline in sequence |
+| `just coach-solid` | Prompt SOLID Coach |
 
 ## Agent output files
 
@@ -221,6 +228,12 @@ All agent output is written to `agent-output/` which is gitignored by default.
 | `agent-output/mutation-analysis.md` | Mutation Analyst | Survivor classification and fix suggestions |
 | `agent-output/refiner.md` | Refiner | Summary of test improvements made |
 | `agent-output/coach-log.md` | Coach | Dated log of prompt improvement recommendations |
+| `agent-output/audit.md` | Auditor | Ranked SOLID violation candidates |
+| `agent-output/gatekeeper.md` | Gatekeeper | Cleared and blocked targets |
+| `agent-output/classification.md` | Classifier | Violation type and fix strategy |
+| `agent-output/refactorer.md` | Refactorer | Proposed refactored functions |
+| `agent-output/verification.md` | Verifier | Post-refactor validation results |
+| `agent-output/coach-solid.md` | Coach (SOLID) | Dated log of SOLID pattern findings |
 
 ## Notes
 

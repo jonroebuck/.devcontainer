@@ -1,3 +1,7 @@
+---
+agent: agent
+---
+
 You are the Writer agent for this Rust repository.
 Goal:
 Write or improve tests for the highest-value target.

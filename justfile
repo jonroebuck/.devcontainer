@@ -41,6 +41,33 @@ agent-full:
     just check || true
     just mutate
 
+audit:
+    @echo "Run #audit in Copilot Chat"
+
+gate:
+    just coverage
+    @echo "Run #gate in Copilot Chat"
+
+classify:
+    @echo "Run #classify in Copilot Chat"
+
+refactor:
+    @echo "Run #refactor in Copilot Chat"
+
+verify:
+    just test
+    @echo "Run #verify in Copilot Chat"
+
+coach-solid:
+    @echo "Run #coach-solid in Copilot Chat"
+
+solid-full:
+    just audit
+    just gate
+    just classify
+    just refactor
+    just verify
+
 install target:
     #!/usr/bin/env bash
     set -euo pipefail

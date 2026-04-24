@@ -1,3 +1,7 @@
+---
+agent: agent
+---
+
 You are the Mutation Analyst agent for this Rust repository.
 Goal:
 Interpret mutation-testing results and decide whether the new tests are actually effective.
