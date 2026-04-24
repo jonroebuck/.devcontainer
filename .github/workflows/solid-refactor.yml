@@ -1,0 +1,106 @@
+name: SOLID Refactor PR
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry run — report only, do not open PR'
+        type: boolean
+        default: true
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Verify agent output exists
+        run: |
+          if [ ! -f agent-output/verification.md ]; then
+            echo "agent-output/verification.md not found."
+            echo "Run the full SOLID agent team in Codespaces first."
+            exit 1
+          fi
+          if [ ! -f agent-output/refactorer.md ]; then
+            echo "agent-output/refactorer.md not found."
+            echo "Run the Refactorer agent in Codespaces first."
+            exit 1
+          fi
+
+      - name: Extract target function name
+        id: target
+        run: |
+          TARGET=$(grep -m1 '## Target' -A1 agent-output/refactorer.md \
+            | tail -1 \
+            | tr '[:upper:]' '[:lower:]' \
+            | sed 's/[^a-z0-9]/-/g' \
+            | sed 's/--*/-/g' \
+            | sed 's/^-//;s/-$//')
+          DATE=$(date +%Y-%m-%d)
+          echo "branch=solid/refactor-${TARGET}-${DATE}" >> $GITHUB_OUTPUT
+          echo "title=refactor: ${TARGET} (SOLID)" >> $GITHUB_OUTPUT
+
+      - name: Extract verdict
+        id: verdict
+        run: |
+          VERDICT=$(grep -m1 '## Verdict' -A1 agent-output/verification.md \
+            | tail -1)
+          echo "verdict=${VERDICT}" >> $GITHUB_OUTPUT
+          if echo "${VERDICT}" | grep -qi "rejected"; then
+            echo "Verifier rejected this refactor."
+            echo "Verdict: ${VERDICT}"
+            echo "Review agent-output/verification.md for details."
+            exit 1
+          fi
+
+      - name: Set up git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Create branch and commit
+        if: ${{ inputs.dry_run == false }}
+        run: |
+          git checkout -b ${{ steps.target.outputs.branch }}
+          git add src/
+          git add agent-output/
+          git commit -m "${{ steps.target.outputs.title }}"
+          git push origin ${{ steps.target.outputs.branch }}
+
+      - name: Build PR body
+        id: pr_body
+        run: |
+          cat agent-output/verification.md > pr-body.md
+          echo "" >> pr-body.md
+          echo "---" >> pr-body.md
+          echo "" >> pr-body.md
+          echo "## Refactor detail" >> pr-body.md
+          cat agent-output/refactorer.md >> pr-body.md
+
+      - name: Open PR
+        if: ${{ inputs.dry_run == false }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr create \
+            --base main \
+            --head ${{ steps.target.outputs.branch }} \
+            --title "${{ steps.target.outputs.title }}" \
+            --body-file pr-body.md \
+            --label "solid-refactor" \
+            --label "awaiting-review"
+
+      - name: Dry run summary
+        if: ${{ inputs.dry_run == true }}
+        run: |
+          echo "=== DRY RUN ==="
+          echo "Branch would be: ${{ steps.target.outputs.branch }}"
+          echo "Title would be: ${{ steps.target.outputs.title }}"
+          echo "Verdict: ${{ steps.verdict.outputs.verdict }}"
+          echo "No branch created, no PR opened."

@@ -215,6 +215,8 @@ than after every pass.
 | `just verify` | Run tests then prompt Verifier |
 | `just solid-full` | Run full SOLID pipeline in sequence |
 | `just coach-solid` | Prompt SOLID Coach |
+| `just pr` | Trigger SOLID refactor workflow, open PR |
+| `just pr-dry` | Trigger SOLID refactor workflow, dry run only |
 
 ## Agent output files
 

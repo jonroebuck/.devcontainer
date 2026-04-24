@@ -68,6 +68,12 @@ solid-full:
     just refactor
     just verify
 
+pr:
+    gh workflow run solid-refactor.yml -f dry_run=false
+
+pr-dry:
+    gh workflow run solid-refactor.yml -f dry_run=true
+
 install target:
     #!/usr/bin/env bash
     set -euo pipefail
