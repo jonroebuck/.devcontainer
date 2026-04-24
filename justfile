@@ -92,9 +92,11 @@ install target:
         [[ "$confirm" =~ ^[Yy]$ ]] || exit 0
     fi
     mkdir -p {{target}}/.github/prompts
+    mkdir -p {{target}}/.github/workflows
     mkdir -p {{target}}/agent-output
     cp .github/copilot-instructions.md {{target}}/.github/copilot-instructions.md
     cp .github/prompts/*.prompt.md {{target}}/.github/prompts/
+    cp .github/workflows/solid-refactor.yml {{target}}/.github/workflows/solid-refactor.yml
     cp justfile {{target}}/justfile
     mkdir -p {{target}}/.devcontainer
     cp .devcontainer/devcontainer.json {{target}}/.devcontainer/devcontainer.json
